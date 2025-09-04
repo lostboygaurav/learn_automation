@@ -31,11 +31,27 @@ const { chromium } = require('@playwright/test');
 
   // Wait until redirected back to your app
   await page.waitForURL('https://devcv.91trucks.com/dashboard');  // replace with your app’s post-login page
-  await page.waitForTimeout(10000),
-  await page.waitForURL('https://devcv.91trucks.com/deal');  // replace with your app’s post-login page
-  await page.waitForTimeout(10000),
-  await page.waitForURL('https://devcv.91trucks.com/customers');  // replace with your app’s post-login page
-  await page.waitForTimeout(10000),
+  await page.waitForTimeout(5000)
+  
+    const menuTabs = [
+    { name: 'Deals', selector: 'text=deal'},
+    { name: 'Customers', selector: 'text=customers' },
+    { name: 'Users', selector: 'text=user' }
+    // ➕ add more tabs here
+  ];
+
+  for (const tab of menuTabs) {
+    console.log(`➡️ Opening ${tab.name} page...`);
+    await page.click(tab.selector);
+    await page.waitForLoadState('networkidle'); // wait until content loads
+    await page.waitForTimeout(5000);
+    await page.screenshot({ path: `${tab.name}.png` }); // optional screenshot
+  }
+
+//   await page.waitForURL('https://devcv.91trucks.com/deal');  // replace with your app’s post-login page
+//   
+//   await page.waitForURL('https://devcv.91trucks.com/customers');  // replace with your app’s post-login page
+//   await page.waitForTimeout(10000),
 
   console.log("✅ Successfully logged in with Google!");
 
