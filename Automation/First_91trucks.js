@@ -9,18 +9,55 @@ const { chromium } = require('@playwright/test');
   await page.goto('https://www.91trucks.com/');
 
   // 2. Verify Logo on Top Left
-  const logo = await page.waitForSelector('img[alt="91trucks"]'); // adjust selector if needed
+  const logo = await page.waitForSelector('.lg\\:mr-1', { timeout: 10000 });
+
+  // Click on the logo (if required)
+  await page.click('.lg\\:mr-1');
+
+  // Wait for homepage URL after clicking logo
+  await page.waitForURL('https://www.91trucks.com/', { timeout: 10000 });
+
+  // Wait a bit (optional)
   await page.waitForTimeout(3000);
+
+  // Check visibility
   if (await logo.isVisible()) {
-    console.log("✅ Logo is visible on the top left");
+  console.log("✅ Logo is visible on the top left");
   } else {
-    console.log("❌ Logo is NOT visible");
+  console.log("❌ Logo is NOT visible");
   }
 
   // 3. Use Elastic Search to find a truck (Mahindra ZEO)
-  await page.fill('input[placeholder="Search for Trucks, Buses, ThreeWheelers."]', 'Mahindra ZEO', 'tata Ace gold'); // adjust placeholder
-  await page.keyboard.press('Enter');
-  await page.waitForTimeout(3000);
+  const trucks = ["Mahindra ZEO Truck", "Tata Ace Gold CNG Truck"];
+
+  for (const truck of trucks) {
+    console.log(`➡️ Searching for: ${truck}`);
+  
+    // Fill search bar
+    await page.fill('input[placeholder="Search for Trucks, Buses, ThreeWheelers."]', truck);
+    await page.waitForTimeout(3000); // give time for suggestions to load
+
+    // Try to click from dropdown if available
+    const suggestion = page.locator('li >> text=' + truck); // adjust based on real DOM
+  
+    if (await suggestion.count() > 0) {
+      await suggestion.first().click();
+      console.log(`✅ Selected ${truck} from dropdown`);
+    } 
+    else {
+      // If no dropdown, press Enter
+      await page.keyboard.press('Enter');
+      console.log(`⚠️ No dropdown, pressed Enter for ${truck}`);
+    }
+  
+    // Wait for redirect to truck module
+    await page.waitForLoadState('networkidle');
+    console.log(`✅ Redirected to ${truck} page`);
+  
+    // Go back to homepage before next search
+    await page.goto('https://www.91trucks.com');
+    await page.waitForLoadState('networkidle');
+  }
   console.log("✅ Search completed for Mahindra ZEO or tata Ace gold");
 
   // 4. Select a Location (e.g., Gurgaon or Ahmedabad)
