@@ -1,0 +1,20 @@
+import { test, expect } from '@playwright/test';
+test('test', async ({ page }) => {
+  await page.goto('https://dev.91trucks.com/');
+  await page.getByLabel('Home').click();
+  await page.locator('li').filter({ hasText: 'ElectricElectric VehiclesElectric Charging Stations' }).locator('span').click();
+  await page.getByPlaceholder('Search for Trucks, Buses,').click();
+  await page.getByPlaceholder('Search for Trucks, Buses,').fill('mahindra zeo');
+  await page.getByText('Mahindra Zeo Truck').click();
+  await page.locator('button[name="image"]').click();
+  await page.getByPlaceholder('Search for Trucks, Buses,').dblclick();
+  await page.getByPlaceholder('Search for Trucks, Buses,').fill('tata ace gold cng truc');
+  await page.getByText('Tata Ace Gold CNG Truck', { exact: true }).click();
+  await page.getByText('English').click();
+  await page.getByText('हिंदी').click();
+  await page.getByText('Hindi').click();
+  await page.getByText('English').click();
+  await page.getByLabel('Select City').click();
+  await page.getByRole('img', { name: 'Gurgaon' }).click();
+});
+

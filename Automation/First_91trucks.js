@@ -60,7 +60,41 @@ const { chromium } = require('@playwright/test');
   }
   console.log("✅ Search completed for Mahindra ZEO or tata Ace gold");
 
-  // 4. Select a Location (e.g., Gurgaon or Ahmedabad)
+    // 4. Toggle Language (Hindi / English)
+    // await page.waitForSelector('.font-semibold', { timeout: 10000 });
+    // await page.click('.font-semibold');
+    // await page.waitForTimeout(2000);
+    // console.log("✅ Language switched to Hindi");
+    
+    // // Switch back to English
+    // await page.waitForSelector('.font-semibold', { timeout: 10000 });
+    // await page.click('.font-semibold');
+    // await page.waitForTimeout(2000);
+    // console.log("✅ Language switched back to English");
+
+    const languages = [
+        { name: "Hindi", selector: '.font-semibold' },
+        { name: "English", selector: '.font-semibold' }
+      ];
+    
+      for (const lang of languages) {
+        console.log(`➡️ Clicking ${lang.name}...`);
+    
+        // 2. Click dropdown option
+        await page.waitForSelector(lang.selector, { timeout: 10000 });
+        await page.click(lang.selector);
+    
+        // 3. Wait for redirect to complete
+        await page.waitForLoadState('networkidle');
+    
+        // Optional: verify by URL or title
+        console.log(`✅ Redirected after selecting ${lang.name}, Current URL: ${page.url()}`);
+    
+        // 4. Small pause to see result
+        await page.waitForTimeout(2000);
+      }
+
+  // 5. Select a Location (e.g., Gurgaon or Ahmedabad)
   await page.click('button:has-text("Select Location")'); // adjust if needed
 
   // Wait for popup/modal to appear
